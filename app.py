@@ -1,1 +1,519 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
 
+from scipy import stats
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.cluster import KMeans
+from sklearn.decomposition import FactorAnalysis
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, mean_squared_error
+
+import statsmodels.api as sm
+from lifelines import KaplanMeierFitter
+
+# ---------------------------------
+# App Title
+# ---------------------------------
+
+st.set_page_config(page_title="Statistical Laboratory", layout="wide")
+
+st.title("Advanced Statistical Analysis Laboratory")
+
+# ---------------------------------
+# Sidebar Menu
+# ---------------------------------
+
+lab = st.sidebar.selectbox(
+    "Select Laboratory",
+    [
+        "Welcome",
+        "Data Lab",
+        "Data Cleaning Lab",
+        "Descriptive Statistics Lab",
+        "Visualization Lab",
+        "Interactive Visualization Lab",
+        "Hypothesis Testing Lab",
+        "Regression Lab",
+        "Logistic Regression Lab",
+        "ANOVA Lab",
+        "Chi-Square Test Lab",
+        "Time Series Analysis Lab",
+        "Quality Control Lab",
+        "Multivariate Analysis Lab",
+        "Cluster Analysis Lab",
+        "Factor Analysis Lab",
+        "Structural Equation Modeling Lab",
+        "Bayesian Statistics Lab",
+        "Survival Analysis Lab",
+        "Experimental Design Lab",
+        "Machine Learning Lab",
+        "Simulation Lab",
+        "Report Generator",
+        "Help"
+    ]
+)
+
+# ---------------------------------
+# Upload Dataset
+# ---------------------------------
+
+uploaded_file = st.sidebar.file_uploader("Upload Dataset", type=["csv","xlsx"])
+
+if uploaded_file:
+
+    if uploaded_file.name.endswith(".csv"):
+        df = pd.read_csv(uploaded_file)
+    else:
+        df = pd.read_excel(uploaded_file)
+
+else:
+    df = None
+
+# ---------------------------------
+# Welcome
+# ---------------------------------
+
+if lab == "Welcome":
+
+    st.header("Welcome")
+
+    st.write("""
+    This system provides multiple statistical laboratories for data analysis.
+
+    Steps:
+    1. Upload dataset
+    2. Select laboratory
+    3. Choose variables
+    4. Run analysis
+    """)
+
+# ---------------------------------
+# Data Lab
+# ---------------------------------
+
+elif lab == "Data Lab":
+
+    st.header("Data Laboratory")
+
+    if df is not None:
+
+        st.dataframe(df)
+
+        st.write("Shape:", df.shape)
+        st.write("Columns:", df.columns)
+        st.write("Data Types")
+        st.write(df.dtypes)
+
+    else:
+        st.warning("Upload dataset first")
+
+# ---------------------------------
+# Data Cleaning
+# ---------------------------------
+
+elif lab == "Data Cleaning Lab":
+
+    st.header("Data Cleaning")
+
+    if df is not None:
+
+        st.write("Missing Values")
+        st.write(df.isnull().sum())
+
+        if st.button("Drop Missing Values"):
+            df = df.dropna()
+            st.success("Missing values removed")
+
+        if st.button("Remove Duplicates"):
+            df = df.drop_duplicates()
+            st.success("Duplicates removed")
+
+# ---------------------------------
+# Descriptive Statistics
+# ---------------------------------
+
+elif lab == "Descriptive Statistics Lab":
+
+    st.header("Descriptive Statistics")
+
+    if df is not None:
+
+        st.write(df.describe())
+
+# ---------------------------------
+# Visualization
+# ---------------------------------
+
+elif lab == "Visualization Lab":
+
+    st.header("Visualization")
+
+    if df is not None:
+
+        column = st.selectbox("Select Variable", df.columns)
+
+        fig, ax = plt.subplots()
+
+        sns.histplot(df[column], kde=True)
+
+        st.pyplot(fig)
+
+# ---------------------------------
+# Interactive Visualization
+# ---------------------------------
+
+elif lab == "Interactive Visualization Lab":
+
+    st.header("Interactive Visualization")
+
+    if df is not None:
+
+        x = st.selectbox("X Variable", df.columns)
+        y = st.selectbox("Y Variable", df.columns)
+
+        fig = px.scatter(df, x=x, y=y)
+
+        st.plotly_chart(fig)
+
+# ---------------------------------
+# Hypothesis Testing
+# ---------------------------------
+
+elif lab == "Hypothesis Testing Lab":
+
+    st.header("Hypothesis Testing")
+
+    if df is not None:
+
+        column = st.selectbox("Variable", df.columns)
+
+        t,p = stats.ttest_1samp(df[column],0)
+
+        st.write("T statistic:",t)
+        st.write("P value:",p)
+
+# ---------------------------------
+# Regression
+# ---------------------------------
+
+elif lab == "Regression Lab":
+
+    st.header("Linear Regression")
+
+    if df is not None:
+
+        x = st.selectbox("Independent Variable", df.columns)
+        y = st.selectbox("Dependent Variable", df.columns)
+
+        X = df[[x]]
+        Y = df[y]
+
+        model = LinearRegression()
+
+        model.fit(X,Y)
+
+        pred = model.predict(X)
+
+        st.write("Coefficient:",model.coef_)
+        st.write("Intercept:",model.intercept_)
+        st.write("Mean Squared Error:",mean_squared_error(Y,pred))
+
+# ---------------------------------
+# Logistic Regression
+# ---------------------------------
+
+elif lab == "Logistic Regression Lab":
+
+    st.header("Logistic Regression")
+
+    if df is not None:
+
+        x = st.selectbox("Predictor", df.columns)
+        y = st.selectbox("Binary Target", df.columns)
+
+        X = df[[x]]
+        Y = df[y]
+
+        model = LogisticRegression()
+
+        model.fit(X,Y)
+
+        pred = model.predict(X)
+
+        st.write("Accuracy:",accuracy_score(Y,pred))
+
+# ---------------------------------
+# ANOVA
+# ---------------------------------
+
+elif lab == "ANOVA Lab":
+
+    st.header("ANOVA")
+
+    if df is not None:
+
+        num = st.selectbox("Numeric Variable", df.columns)
+        group = st.selectbox("Group Variable", df.columns)
+
+        groups = df.groupby(group)[num].apply(list)
+
+        f,p = stats.f_oneway(*groups)
+
+        st.write("F statistic:",f)
+        st.write("P value:",p)
+
+# ---------------------------------
+# Chi Square
+# ---------------------------------
+
+elif lab == "Chi-Square Test Lab":
+
+    st.header("Chi-Square Test")
+
+    if df is not None:
+
+        col1 = st.selectbox("Variable 1", df.columns)
+        col2 = st.selectbox("Variable 2", df.columns)
+
+        table = pd.crosstab(df[col1],df[col2])
+
+        chi,p,dof,exp = stats.chi2_contingency(table)
+
+        st.write("Chi-square:",chi)
+        st.write("P-value:",p)
+
+# ---------------------------------
+# Time Series
+# ---------------------------------
+
+elif lab == "Time Series Analysis Lab":
+
+    st.header("Time Series Analysis")
+
+    if df is not None:
+
+        column = st.selectbox("Time Series Variable",df.columns)
+
+        st.line_chart(df[column])
+
+# ---------------------------------
+# Quality Control
+# ---------------------------------
+
+elif lab == "Quality Control Lab":
+
+    st.header("Control Chart")
+
+    if df is not None:
+
+        column = st.selectbox("Process Variable",df.columns)
+
+        mean = df[column].mean()
+        std = df[column].std()
+
+        ucl = mean + 3*std
+        lcl = mean - 3*std
+
+        st.write("UCL:",ucl)
+        st.write("LCL:",lcl)
+
+        st.line_chart(df[column])
+
+# ---------------------------------
+# Multivariate Analysis
+# ---------------------------------
+
+elif lab == "Multivariate Analysis Lab":
+
+    st.header("Correlation Matrix")
+
+    if df is not None:
+
+        corr = df.corr()
+
+        fig,ax = plt.subplots()
+
+        sns.heatmap(corr,annot=True)
+
+        st.pyplot(fig)
+
+# ---------------------------------
+# Cluster Analysis
+# ---------------------------------
+
+elif lab == "Cluster Analysis Lab":
+
+    st.header("KMeans Clustering")
+
+    if df is not None:
+
+        k = st.slider("Clusters",2,10,3)
+
+        numeric = df.select_dtypes(include=np.number)
+
+        model = KMeans(n_clusters=k)
+
+        model.fit(numeric)
+
+        st.write("Cluster Centers")
+
+        st.write(model.cluster_centers_)
+
+# ---------------------------------
+# Factor Analysis
+# ---------------------------------
+
+elif lab == "Factor Analysis Lab":
+
+    st.header("Factor Analysis")
+
+    if df is not None:
+
+        numeric = df.select_dtypes(include=np.number)
+
+        fa = FactorAnalysis(n_components=2)
+
+        fa.fit(numeric)
+
+        st.write("Factor Loadings")
+
+        st.write(fa.components_)
+
+# ---------------------------------
+# SEM
+# ---------------------------------
+
+elif lab == "Structural Equation Modeling Lab":
+
+    st.header("Structural Equation Modeling")
+
+    st.info("SEM requires predefined model specification.")
+
+# ---------------------------------
+# Bayesian
+# ---------------------------------
+
+elif lab == "Bayesian Statistics Lab":
+
+    st.header("Bayesian Statistics")
+
+    data = np.random.normal(0,1,1000)
+
+    fig,ax = plt.subplots()
+
+    sns.histplot(data,kde=True)
+
+    st.pyplot(fig)
+
+# ---------------------------------
+# Survival Analysis
+# ---------------------------------
+
+elif lab == "Survival Analysis Lab":
+
+    st.header("Survival Analysis")
+
+    if df is not None:
+
+        time = st.selectbox("Time Variable",df.columns)
+        event = st.selectbox("Event Variable",df.columns)
+
+        kmf = KaplanMeierFitter()
+
+        kmf.fit(df[time], event_observed=df[event])
+
+        kmf.plot_survival_function()
+
+        st.pyplot(plt)
+
+# ---------------------------------
+# Experimental Design
+# ---------------------------------
+
+elif lab == "Experimental Design Lab":
+
+    st.header("Experimental Design")
+
+    st.write("Use randomized designs and analyze using ANOVA.")
+
+# ---------------------------------
+# Machine Learning
+# ---------------------------------
+
+elif lab == "Machine Learning Lab":
+
+    st.header("Machine Learning")
+
+    if df is not None:
+
+        numeric = df.select_dtypes(include=np.number)
+
+        X = numeric.iloc[:,:-1]
+        y = numeric.iloc[:,-1]
+
+        X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.3)
+
+        model = LinearRegression()
+
+        model.fit(X_train,y_train)
+
+        pred = model.predict(X_test)
+
+        st.write("MSE:",mean_squared_error(y_test,pred))
+
+# ---------------------------------
+# Simulation
+# ---------------------------------
+
+elif lab == "Simulation Lab":
+
+    st.header("Monte Carlo Simulation")
+
+    n = st.slider("Sample Size",100,10000,1000)
+
+    data = np.random.normal(0,1,n)
+
+    fig,ax = plt.subplots()
+
+    sns.histplot(data)
+
+    st.pyplot(fig)
+
+# ---------------------------------
+# Report Generator
+# ---------------------------------
+
+elif lab == "Report Generator":
+
+    st.header("Report Generator")
+
+    if df is not None:
+
+        report = df.describe().to_string()
+
+        st.download_button(
+            "Download Report",
+            report,
+            "statistical_report.txt"
+        )
+
+# ---------------------------------
+# Help
+# ---------------------------------
+
+elif lab == "Help":
+
+    st.header("Help")
+
+    st.write("""
+    Instructions:
+
+    1 Upload dataset
+    2 Select laboratory
+    3 Choose variables
+    4 View statistical results
+    """)
