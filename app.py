@@ -21,7 +21,7 @@ from lifelines import KaplanMeierFitter
 
 st.set_page_config(page_title="Statistical Laboratory", layout="wide")
 
-st.title("Advanced Statistical Analysis Laboratory")
+st.title("Statistical Software Laboratory")
 
 # ---------------------------------
 # Sidebar Menu
@@ -79,7 +79,7 @@ else:
 
 if lab == "Welcome":
 
-    st.header("Welcome to StatX Software: Advanced Statistical Weblab")
+    st.header("Welcome to StatX Software: Statistical Weblab")
 
     st.markdown("""
     **Founded by:**  
@@ -534,12 +534,5 @@ elif lab == "Help":
 
 st.markdown("""
 ---
-**Statistical Laboratory Platform**
-
-Founded by **Dr. Kidane Desta**  
-Department of Statistics  
-College of Natural and Computational Sciences  
-Aksum University
-
 © Copyright 2024–2026 Dr. Kidane Desta. All rights reserved.
 """)
