@@ -79,16 +79,26 @@ else:
 
 if lab == "Welcome":
 
-    st.header("Welcome")
+    st.header("Welcome to StatX Software: Advanced Statistical Weblab")
 
-    st.write("""
-    This system provides multiple statistical laboratories for data analysis.
+    st.markdown("""
+    **Founded by:**  
+    **Dr. Kidane Desta**  
+    Department of Statistics  
+    College of Natural and Computational Sciences  
+    Aksum University
 
-    Steps:
+    ---
+
+    This platform provides multiple **interactive statistical laboratories**
+    designed for education, research, and advanced data analysis.
+
+    ### How to Use
     1. Upload dataset
-    2. Select laboratory
+    2. Select a statistical laboratory
     3. Choose variables
     4. Run analysis
+    5. Interpret results
     """)
 
 # ---------------------------------
@@ -517,3 +527,19 @@ elif lab == "Help":
     3 Choose variables
     4 View statistical results
     """)
+
+# ---------------------------------
+# Footer
+# ---------------------------------
+
+st.markdown("""
+---
+**Statistical Laboratory Platform**
+
+Founded by **Dr. Kidane Desta**  
+Department of Statistics  
+College of Natural and Computational Sciences  
+Aksum University
+
+© Copyright 2024–2026 Dr. Kidane Desta. All rights reserved.
+""")
