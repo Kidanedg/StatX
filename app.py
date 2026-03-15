@@ -10,325 +10,314 @@ import modules as statx
 
 
 # ------------------------------------------------
-# PAGE CONFIGURATION
+# MAIN STATX PLATFORM FUNCTION
 # ------------------------------------------------
 
-st.set_page_config(
-    page_title="StatX Global Scientific Platform",
-    page_icon="📊",
-    layout="wide"
-)
+def run_statx():
 
+    # ------------------------------------------------
+    # PAGE CONFIGURATION
+    # ------------------------------------------------
 
-# ------------------------------------------------
-# HEADER
-# ------------------------------------------------
+    st.set_page_config(
+        page_title="StatX Global Scientific Platform",
+        page_icon="📊",
+        layout="wide"
+    )
 
-st.title("📊 StatX Global Scientific Platform")
-st.subheader("Unified Environment for Statistics, AI, and Scientific Discovery")
+    # ------------------------------------------------
+    # HEADER
+    # ------------------------------------------------
 
+    st.title("📊 StatX Global Scientific Platform")
+    st.subheader("Unified Environment for Statistics, AI, and Scientific Discovery")
 
-# ------------------------------------------------
-# DATASET MANAGER
-# ------------------------------------------------
+    # ------------------------------------------------
+    # DATASET MANAGER
+    # ------------------------------------------------
 
-st.sidebar.header("Dataset Manager")
+    st.sidebar.header("Dataset Manager")
 
-uploaded_file = st.sidebar.file_uploader(
-    "Upload Dataset",
-    type=["csv", "xlsx", "xls", "txt", "json", "parquet"]
-)
+    uploaded_file = st.sidebar.file_uploader(
+        "Upload Dataset",
+        type=["csv", "xlsx", "xls", "txt", "json", "parquet"]
+    )
 
-df = None
+    df = None
 
-if uploaded_file:
+    if uploaded_file:
 
-    try:
+        try:
 
-        name = uploaded_file.name.lower()
+            name = uploaded_file.name.lower()
 
-        if name.endswith(".csv"):
-            df = pd.read_csv(uploaded_file)
+            if name.endswith(".csv"):
+                df = pd.read_csv(uploaded_file)
 
-        elif name.endswith(".xlsx") or name.endswith(".xls"):
-            df = pd.read_excel(uploaded_file)
+            elif name.endswith(".xlsx") or name.endswith(".xls"):
+                df = pd.read_excel(uploaded_file)
 
-        elif name.endswith(".txt"):
-            df = pd.read_csv(uploaded_file, sep=None, engine="python")
+            elif name.endswith(".txt"):
+                df = pd.read_csv(uploaded_file, sep=None, engine="python")
 
-        elif name.endswith(".json"):
-            df = pd.read_json(uploaded_file)
+            elif name.endswith(".json"):
+                df = pd.read_json(uploaded_file)
 
-        elif name.endswith(".parquet"):
-            df = pd.read_parquet(uploaded_file)
+            elif name.endswith(".parquet"):
+                df = pd.read_parquet(uploaded_file)
 
-        st.success("Dataset loaded successfully")
+            st.success("Dataset loaded successfully")
 
-        st.write("Preview")
-        st.dataframe(df.head())
+            st.write("Preview")
+            st.dataframe(df.head())
 
-    except Exception as e:
-        st.error(f"Error loading dataset: {e}")
+        except Exception as e:
+            st.error(f"Error loading dataset: {e}")
 
+    # ------------------------------------------------
+    # SIDEBAR MODULE NAVIGATION
+    # ------------------------------------------------
 
-# ------------------------------------------------
-# SIDEBAR MODULE NAVIGATION
-# ------------------------------------------------
+    st.sidebar.header("StatX Modules")
 
-st.sidebar.header("StatX Modules")
+    module = st.sidebar.selectbox(
+        "Select Analysis Module",
+        [
 
-module = st.sidebar.selectbox(
-    "Select Analysis Module",
-    [
+            "Home",
 
-        "Home",
+            # Core
+            "AI Statistical Advisor",
+            "AI Discovery Lab",
+            "Autonomous Scientific Discovery",
 
-        # Core
-        "AI Statistical Advisor",
-        "AI Discovery Lab",
-        "Autonomous Scientific Discovery",
+            # Basic Statistics
+            "Descriptive Statistics",
+            "EDA",
+            "Data Lab",
+            "Cleaning Lab",
+            "Visualization",
 
-        # Basic Statistics
-        "Descriptive Statistics",
-        "EDA",
-        "Data Lab",
-        "Cleaning Lab",
-        "Visualization",
+            # Statistical Analysis
+            "Hypothesis Testing",
+            "Chi-Square Test",
+            "ANOVA",
+            "Regression",
+            "Factor Analysis",
+            "Cluster Analysis",
+            "Multivariate Analysis",
 
-        # Statistical Analysis
-        "Hypothesis Testing",
-        "Chi-Square Test",
-        "ANOVA",
-        "Regression",
-        "Factor Analysis",
-        "Cluster Analysis",
-        "Multivariate Analysis",
+            # Advanced Statistics
+            "Bayesian Statistics",
+            "Simulation",
+            "Time Series",
+            "Spatial Statistics",
+            "Survival Analysis",
 
-        # Advanced Statistics
-        "Bayesian Statistics",
-        "Simulation",
-        "Time Series",
-        "Spatial Statistics",
-        "Survival Analysis",
+            # ML & Econometrics
+            "Econometrics",
+            "Machine Learning",
 
-        # ML & Econometrics
-        "Econometrics",
-        "Machine Learning",
+            # Biostatistics
+            "Biostatistics",
+            "Medical Biostatistics",
+            "Biometrics",
 
-        # Biostatistics
-        "Biostatistics",
-        "Medical Biostatistics",
-        "Biometrics",
+            # Bioinformatics
+            "Bioinformatics",
+            "Genomics DNA Engine",
+            "Systems Biology",
 
-        # Bioinformatics
-        "Bioinformatics",
-        "Genomics DNA Engine",
-        "Systems Biology",
+            # Chemistry
+            "Chemoinformatics",
+            "Drug Discovery",
 
-        # Chemistry
-        "Chemoinformatics",
-        "Drug Discovery",
+            # Physics & Energy
+            "Statistical Physics",
+            "Bioenergy",
 
-        # Physics & Energy
-        "Statistical Physics",
-        "Bioenergy",
+            # Global Systems
+            "Global Intelligence",
 
-        # Global Systems
-        "Global Intelligence",
+            # Research
+            "Research Paper Generator",
+            "Research Reporting",
 
-        # Research
-        "Research Paper Generator",
-        "Research Reporting",
+            # Consulting
+            "Statistical Consultant"
+        ]
+    )
 
-        # Consulting
-        "Statistical Consultant"
+    # ------------------------------------------------
+    # MODULE ROUTING
+    # ------------------------------------------------
 
-    ]
-)
+    if module == "Home":
 
+        st.write("Welcome to **StatX Scientific Platform**.")
 
-# ------------------------------------------------
-# MODULE ROUTING
-# ------------------------------------------------
+        st.write("""
+        StatX integrates:
 
-if module == "Home":
+        - Advanced statistical analysis
+        - Machine learning
+        - Bioinformatics
+        - Scientific discovery AI
+        - Global scientific data networks
+        """)
 
-    st.write("Welcome to **StatX Scientific Platform**.")
+    # ------------------------------------------------
+    # AI MODULES
+    # ------------------------------------------------
 
-    st.write("""
-    StatX integrates:
+    elif module == "AI Statistical Advisor":
+        statx.ai_statistical_advisor(df)
 
-    - Advanced statistical analysis
-    - Machine learning
-    - Bioinformatics
-    - Scientific discovery AI
-    - Global scientific data networks
-    """)
+    elif module == "AI Discovery Lab":
+        statx.ai_discovery_lab(df)
 
+    elif module == "Autonomous Scientific Discovery":
+        statx.autonomous_scientific_discovery(df)
 
-# ------------------------------------------------
-# AI MODULES
-# ------------------------------------------------
+    # ------------------------------------------------
+    # CORE STATISTICS
+    # ------------------------------------------------
 
-elif module == "AI Statistical Advisor":
-    statx.ai_statistical_advisor(df)
+    elif module == "Descriptive Statistics":
+        statx.descriptive_lab(df)
 
-elif module == "AI Discovery Lab":
-    statx.ai_discovery_lab(df)
+    elif module == "EDA":
+        statx.eda_lab(df)
 
-elif module == "Autonomous Scientific Discovery":
-    statx.autonomous_scientific_discovery(df)
+    elif module == "Data Lab":
+        statx.data_lab(df)
 
+    elif module == "Cleaning Lab":
+        statx.cleaning_lab(df)
 
-# ------------------------------------------------
-# CORE STATISTICS
-# ------------------------------------------------
+    elif module == "Visualization":
+        statx.visualization_lab(df)
 
-elif module == "Descriptive Statistics":
-    statx.descriptive_lab(df)
+    # ------------------------------------------------
+    # STATISTICAL ANALYSIS
+    # ------------------------------------------------
 
-elif module == "EDA":
-    statx.eda_lab(df)
+    elif module == "Hypothesis Testing":
+        statx.hypothesis_lab(df)
 
-elif module == "Data Lab":
-    statx.data_lab(df)
+    elif module == "Chi-Square Test":
+        statx.chi_square_lab(df)
 
-elif module == "Cleaning Lab":
-    statx.cleaning_lab(df)
+    elif module == "ANOVA":
+        statx.anova_lab(df)
 
-elif module == "Visualization":
-    statx.visualization_lab(df)
+    elif module == "Regression":
+        statx.regression_lab(df)
 
+    elif module == "Factor Analysis":
+        statx.factor_lab(df)
 
-# ------------------------------------------------
-# STATISTICAL ANALYSIS
-# ------------------------------------------------
+    elif module == "Cluster Analysis":
+        statx.cluster_lab(df)
 
-elif module == "Hypothesis Testing":
-    statx.hypothesis_lab(df)
+    elif module == "Multivariate Analysis":
+        statx.multivariate_lab(df)
 
-elif module == "Chi-Square Test":
-    statx.chi_square_lab(df)
+    # ------------------------------------------------
+    # ADVANCED STATISTICS
+    # ------------------------------------------------
 
-elif module == "ANOVA":
-    statx.anova_lab(df)
+    elif module == "Bayesian Statistics":
+        statx.bayesian_lab(df)
 
-elif module == "Regression":
-    statx.regression_lab(df)
+    elif module == "Simulation":
+        statx.simulation_lab(df)
 
-elif module == "Factor Analysis":
-    statx.factor_lab(df)
+    elif module == "Time Series":
+        statx.time_series_lab(df)
 
-elif module == "Cluster Analysis":
-    statx.cluster_lab(df)
+    elif module == "Spatial Statistics":
+        statx.spatial_statistics_lab(df)
 
-elif module == "Multivariate Analysis":
-    statx.multivariate_lab(df)
+    elif module == "Survival Analysis":
+        statx.survival_lab(df)
 
+    # ------------------------------------------------
+    # ECONOMETRICS & ML
+    # ------------------------------------------------
 
-# ------------------------------------------------
-# ADVANCED STATISTICS
-# ------------------------------------------------
+    elif module == "Econometrics":
+        statx.econometrics_lab(df)
 
-elif module == "Bayesian Statistics":
-    statx.bayesian_lab(df)
+    elif module == "Machine Learning":
+        statx.machine_learning_lab(df)
 
-elif module == "Simulation":
-    statx.simulation_lab(df)
+    # ------------------------------------------------
+    # BIOSTATISTICS
+    # ------------------------------------------------
 
-elif module == "Time Series":
-    statx.time_series_lab(df)
+    elif module == "Biostatistics":
+        statx.biostatistics(df)
 
-elif module == "Spatial Statistics":
-    statx.spatial_statistics_lab(df)
+    elif module == "Medical Biostatistics":
+        statx.biostatistics_medical_lab(df)
 
-elif module == "Survival Analysis":
-    statx.survival_lab(df)
+    elif module == "Biometrics":
+        statx.biometrics_modeling(df)
 
+    # ------------------------------------------------
+    # BIOINFORMATICS
+    # ------------------------------------------------
 
-# ------------------------------------------------
-# ECONOMETRICS & ML
-# ------------------------------------------------
+    elif module == "Bioinformatics":
+        statx.bioinformatics(df)
 
-elif module == "Econometrics":
-    statx.econometrics_lab(df)
+    elif module == "Genomics DNA Engine":
+        statx.genomics_dna_engine(df)
 
-elif module == "Machine Learning":
-    statx.machine_learning_lab(df)
+    elif module == "Systems Biology":
+        statx.systems_biology_omics_lab(df)
 
+    # ------------------------------------------------
+    # CHEMISTRY
+    # ------------------------------------------------
 
-# ------------------------------------------------
-# BIOSTATISTICS
-# ------------------------------------------------
+    elif module == "Chemoinformatics":
+        statx.chemoinformatics(df)
 
-elif module == "Biostatistics":
-    statx.biostatistics(df)
+    elif module == "Drug Discovery":
+        statx.drug_discovery_lab(df)
 
-elif module == "Medical Biostatistics":
-    statx.biostatistics_medical_lab(df)
+    # ------------------------------------------------
+    # PHYSICS
+    # ------------------------------------------------
 
-elif module == "Biometrics":
-    statx.biometrics_modeling(df)
+    elif module == "Statistical Physics":
+        statx.statistical_physics(df)
 
+    elif module == "Bioenergy":
+        statx.bioenergy(df)
 
-# ------------------------------------------------
-# BIOINFORMATICS
-# ------------------------------------------------
+    # ------------------------------------------------
+    # GLOBAL SYSTEMS
+    # ------------------------------------------------
 
-elif module == "Bioinformatics":
-    statx.bioinformatics(df)
+    elif module == "Global Intelligence":
+        statx.global_intelligence_lab(df)
 
-elif module == "Genomics DNA Engine":
-    statx.genomics_dna_engine(df)
+    # ------------------------------------------------
+    # RESEARCH
+    # ------------------------------------------------
 
-elif module == "Systems Biology":
-    statx.systems_biology_omics_lab(df)
+    elif module == "Research Paper Generator":
+        statx.research_paper_generator(df)
 
+    elif module == "Research Reporting":
+        statx.research_reporting_lab(df)
 
-# ------------------------------------------------
-# CHEMISTRY
-# ------------------------------------------------
+    # ------------------------------------------------
+    # CONSULTING
+    # ------------------------------------------------
 
-elif module == "Chemoinformatics":
-    statx.chemoinformatics(df)
-
-elif module == "Drug Discovery":
-    statx.drug_discovery_lab(df)
-
-
-# ------------------------------------------------
-# PHYSICS
-# ------------------------------------------------
-
-elif module == "Statistical Physics":
-    statx.statistical_physics(df)
-
-elif module == "Bioenergy":
-    statx.bioenergy(df)
-
-
-# ------------------------------------------------
-# GLOBAL SYSTEMS
-# ------------------------------------------------
-
-elif module == "Global Intelligence":
-    statx.global_intelligence_lab(df)
-
-
-# ------------------------------------------------
-# RESEARCH
-# ------------------------------------------------
-
-elif module == "Research Paper Generator":
-    statx.research_paper_generator(df)
-
-elif module == "Research Reporting":
-    statx.research_reporting_lab(df)
-
-
-# ------------------------------------------------
-# CONSULTING
-# ------------------------------------------------
-
-elif module == "Statistical Consultant":
-    statx.stat_consultant(df)
+    elif module == "Statistical Consultant":
+        statx.stat_consultant(df)
