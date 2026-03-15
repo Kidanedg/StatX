@@ -13,12 +13,10 @@ class DatasetInterpreter:
     def analyze_dataset(self, df):
 
         summary = {
-
             "rows": df.shape[0],
             "columns": df.shape[1],
             "numeric_variables": len(df.select_dtypes(include=np.number).columns),
             "categorical_variables": len(df.select_dtypes(exclude=np.number).columns)
-
         }
 
         return summary
@@ -41,11 +39,10 @@ class KnowledgeExtractor:
 
                 if i != j:
 
-                    r = corr.loc[i,j]
+                    r = corr.loc[i, j]
 
                     if abs(r) > 0.6:
-
-                        strong.append((i,j,r))
+                        strong.append((i, j, r))
 
         return strong
 
@@ -58,17 +55,12 @@ class LiteratureKnowledgeBase:
 
     def __init__(self):
 
-        # simplified internal knowledge base
-
         self.knowledge = {
 
-            "income-health":"Higher income improves health outcomes",
-
-            "education-income":"Education increases earning potential",
-
-            "exercise-health":"Regular exercise reduces disease risk",
-
-            "pollution-health":"Air pollution increases respiratory diseases"
+            "income-health": "Higher income improves health outcomes",
+            "education-income": "Education increases earning potential",
+            "exercise-health": "Regular exercise reduces disease risk",
+            "pollution-health": "Air pollution increases respiratory diseases"
 
         }
 
@@ -76,10 +68,9 @@ class LiteratureKnowledgeBase:
 
         results = []
 
-        for k,v in self.knowledge.items():
+        for k, v in self.knowledge.items():
 
             if keyword.lower() in k.lower():
-
                 results.append(v)
 
         return results
@@ -93,19 +84,19 @@ class ResearchComparator:
 
     def compare_with_literature(self, patterns, knowledge_base):
 
-        comparisons=[]
+        comparisons = []
 
-        for a,b,r in patterns:
+        for a, b, r in patterns:
 
-            key=f"{a.lower()}-{b.lower()}"
+            key = f"{a.lower()}-{b.lower()}"
 
-            literature=knowledge_base.search(key)
+            literature = knowledge_base.search(key)
 
             comparisons.append({
 
-                "relationship":f"{a} vs {b}",
-                "correlation":round(r,3),
-                "literature_support":literature
+                "relationship": f"{a} vs {b}",
+                "correlation": round(r, 3),
+                "literature_support": literature
 
             })
 
@@ -120,24 +111,20 @@ class TheoryGenerator:
 
     def generate_theories(self, patterns):
 
-        theories=[]
+        theories = []
 
-        for a,b,r in patterns:
+        for a, b, r in patterns:
 
-            if r>0:
+            if r > 0:
 
                 theories.append(
-
-f"Theory: Increasing {a} may lead to increases in {b}."
-
+                    f"Theory: Increasing {a} may lead to increases in {b}."
                 )
 
             else:
 
                 theories.append(
-
-f"Theory: Higher {a} may reduce {b}."
-
+                    f"Theory: Higher {a} may reduce {b}."
                 )
 
         return theories
@@ -151,94 +138,88 @@ class ScientificInsight:
 
     def interpret_patterns(self, patterns):
 
-        insights=[]
+        insights = []
 
-        for a,b,r in patterns[:5]:
+        for a, b, r in patterns[:5]:
 
             insights.append(
-
-f"Strong statistical association detected between {a} and {b} (r={round(r,2)})."
-
+                f"Strong statistical association detected between {a} and {b} (r={round(r,2)})."
             )
 
         return insights
 
 
 # -------------------------------------------------
-# STREAMLIT INTERFACE
+# MAIN STATX KNOWLEDGE ENGINE
 # -------------------------------------------------
 
-def run(df):
+class StatXKnowledgeEngine:
 
-    st.title("StatX Global Scientific Knowledge Engine")
+    @staticmethod
+    def run(df):
 
-    if df is None:
+        st.title("StatX Global Scientific Knowledge Engine")
 
-        st.warning("Upload dataset first")
-        return
+        if df is None:
 
-    interpreter = DatasetInterpreter()
-    extractor = KnowledgeExtractor()
-    kb = LiteratureKnowledgeBase()
-    comparator = ResearchComparator()
-    theory = TheoryGenerator()
-    insight = ScientificInsight()
+            st.warning("Upload dataset first")
+            return
 
+        interpreter = DatasetInterpreter()
+        extractor = KnowledgeExtractor()
+        kb = LiteratureKnowledgeBase()
+        comparator = ResearchComparator()
+        theory = TheoryGenerator()
+        insight = ScientificInsight()
 
-# ----------------------------------------------
-# DATASET INTERPRETATION
-# ----------------------------------------------
+        # ----------------------------------------------
+        # DATASET INTERPRETATION
+        # ----------------------------------------------
 
-    st.header("Dataset Understanding")
+        st.header("Dataset Understanding")
 
-    summary = interpreter.analyze_dataset(df)
+        summary = interpreter.analyze_dataset(df)
 
-    st.write(summary)
+        st.write(summary)
 
+        # ----------------------------------------------
+        # PATTERN EXTRACTION
+        # ----------------------------------------------
 
-# ----------------------------------------------
-# PATTERN EXTRACTION
-# ----------------------------------------------
+        st.header("Scientific Pattern Discovery")
 
-    st.header("Scientific Pattern Discovery")
+        patterns = extractor.extract_patterns(df)
 
-    patterns = extractor.extract_patterns(df)
+        st.write(patterns)
 
-    st.write(patterns)
+        # ----------------------------------------------
+        # LITERATURE COMPARISON
+        # ----------------------------------------------
 
+        st.header("Comparison With Scientific Literature")
 
-# ----------------------------------------------
-# LITERATURE COMPARISON
-# ----------------------------------------------
+        comparisons = comparator.compare_with_literature(patterns, kb)
 
-    st.header("Comparison With Scientific Literature")
+        st.write(comparisons)
 
-    comparisons = comparator.compare_with_literature(patterns, kb)
+        # ----------------------------------------------
+        # SCIENTIFIC INSIGHTS
+        # ----------------------------------------------
 
-    st.write(comparisons)
+        st.header("Scientific Insights")
 
+        insights = insight.interpret_patterns(patterns)
 
-# ----------------------------------------------
-# SCIENTIFIC INSIGHTS
-# ----------------------------------------------
+        for i in insights:
+            st.write("-", i)
 
-    st.header("Scientific Insights")
+        # ----------------------------------------------
+        # THEORY GENERATION
+        # ----------------------------------------------
 
-    insights = insight.interpret_patterns(patterns)
+        st.header("Generated Scientific Theories")
 
-    for i in insights:
+        theories = theory.generate_theories(patterns)
 
-        st.write("-", i)
-
-
-# ----------------------------------------------
-# THEORY GENERATION
-# ----------------------------------------------
-
-    st.header("Generated Scientific Theories")
-
-    theories = theory.generate_theories(patterns)
-
-    for t in theories[:10]:
-
-        st.write("-", t)
+        for t in theories[:10]:
+            st.write("-", t)
