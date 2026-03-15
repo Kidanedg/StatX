@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import app
 
-API = "http://127.0.0.1:8000"
+API = st.secrets.get("API_URL", "http://127.0.0.1:8000")
 
 st.set_page_config(
     page_title="StatX Scientific Platform",
@@ -10,6 +10,16 @@ st.set_page_config(
 )
 
 st.title("StatX Scientific Platform")
+
+# -------------------
+# SESSION STATE INIT
+# -------------------
+
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if "token" not in st.session_state:
+    st.session_state.token = None
 
 menu = st.sidebar.selectbox(
     "Menu",
@@ -57,8 +67,8 @@ if menu == "Login":
 
             token = r.json()["token"]
 
-            st.session_state["token"] = token
-            st.session_state["logged_in"] = True
+            st.session_state.token = token
+            st.session_state.logged_in = True
 
             st.success("Login successful")
 
@@ -69,7 +79,7 @@ if menu == "Login":
 # AFTER LOGIN
 # -------------------
 
-if st.session_state.get("logged_in"):
+if st.session_state.logged_in:
 
     st.sidebar.success("Logged in")
 
