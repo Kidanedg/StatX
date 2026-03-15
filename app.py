@@ -20,6 +20,43 @@ from lifelines import KaplanMeierFitter
 # ---------------------------------
 
 st.set_page_config(page_title="Statistical Laboratory", layout="wide")
+# ---------------------------------
+# Custom CSS Styling
+# ---------------------------------
+
+st.markdown("""
+<style>
+
+.main {
+    background-color: #f5f7fb;
+}
+
+h1 {
+    color: #0a4f9c;
+}
+
+h2, h3 {
+    color: #1f77b4;
+}
+
+.sidebar .sidebar-content {
+    background-color: #0a4f9c;
+    color: white;
+}
+
+.statx-logo {
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #0a4f9c;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown('<div class="statx-logo">StatX</div>', unsafe_allow_html=True)
 
 st.title("Statistical Software Laboratory")
 
@@ -58,21 +95,162 @@ lab = st.sidebar.selectbox(
 )
 
 # ---------------------------------
-# Upload Dataset
+# ---------------------------------
+# DATASET UPLOAD SYSTEM
 # ---------------------------------
 
-uploaded_file = st.sidebar.file_uploader("Upload Dataset", type=["csv","xlsx"])
+st.sidebar.header("Dataset Manager")
+
+uploaded_file = st.sidebar.file_uploader(
+    "Upload Dataset",
+    type=[
+        "csv","xlsx","xls",
+        "txt","json",
+        "parquet",
+        "dta","sav"
+    ]
+)
+
+df = None
 
 if uploaded_file:
 
-    if uploaded_file.name.endswith(".csv"):
-        df = pd.read_csv(uploaded_file)
-    else:
-        df = pd.read_excel(uploaded_file)
+    try:
 
-else:
-    df = None
+        file_name = uploaded_file.name.lower()
 
+        # CSV
+        if file_name.endswith(".csv"):
+            df = pd.read_csv(uploaded_file)
+
+        # Excel
+        elif file_name.endswith((".xlsx",".xls")):
+            df = pd.read_excel(uploaded_file)
+
+        # TXT
+        elif file_name.endswith(".txt"):
+            df = pd.read_csv(uploaded_file, sep=None, engine="python")
+
+        # JSON
+        elif file_name.endswith(".json"):
+            df = pd.read_json(uploaded_file)
+
+        # Parquet
+        elif file_name.endswith(".parquet"):
+            df = pd.read_parquet(uploaded_file)
+
+        # Stata
+        elif file_name.endswith(".dta"):
+            df = pd.read_stata(uploaded_file)
+
+        # SPSS
+        elif file_name.endswith(".sav"):
+            import pyreadstat
+            df, meta = pyreadstat.read_sav(uploaded_file)
+
+        st.success("Dataset loaded successfully!")
+
+    except Exception as e:
+
+        st.error(f"Error loading file: {e}")
+
+# ---------------------------------
+# DATASET PREVIEW
+# ---------------------------------
+
+if df is not None:
+
+    st.subheader("Dataset Preview")
+
+    st.dataframe(df.head())
+
+    # ---------------------------------
+    # DATASET INFORMATION
+    # ---------------------------------
+
+    st.subheader("Dataset Information")
+
+    col1,col2,col3 = st.columns(3)
+
+    col1.metric("Rows", df.shape[0])
+    col2.metric("Columns", df.shape[1])
+    col3.metric("Missing Values", df.isna().sum().sum())
+
+    # ---------------------------------
+    # VARIABLE TYPES
+    # ---------------------------------
+
+    st.subheader("Variable Types")
+
+    var_types = pd.DataFrame({
+
+        "Variable":df.columns,
+        "Type":df.dtypes
+
+    })
+
+    st.dataframe(var_types)
+
+    # ---------------------------------
+    # MISSING VALUE DIAGNOSTICS
+    # ---------------------------------
+
+    st.subheader("Missing Value Analysis")
+
+    missing = df.isnull().sum()
+
+    missing_table = pd.DataFrame({
+
+        "Variable":missing.index,
+        "Missing Count":missing.values
+
+    })
+
+    st.dataframe(missing_table)
+
+    # ---------------------------------
+    # DATA CLEANING OPTIONS
+    # ---------------------------------
+
+    st.subheader("Data Cleaning Options")
+
+    option = st.selectbox(
+        "Handle Missing Values",
+        [
+        "Do Nothing",
+        "Drop Missing Rows",
+        "Fill with Mean",
+        "Fill with Median",
+        "Fill with Mode"
+        ]
+    )
+
+    if option == "Drop Missing Rows":
+        df = df.dropna()
+
+    elif option == "Fill with Mean":
+        df = df.fillna(df.mean(numeric_only=True))
+
+    elif option == "Fill with Median":
+        df = df.fillna(df.median(numeric_only=True))
+
+    elif option == "Fill with Mode":
+        df = df.fillna(df.mode().iloc[0])
+
+    # ---------------------------------
+    # DATASET DOWNLOAD
+    # ---------------------------------
+
+    st.subheader("Download Processed Dataset")
+
+    csv = df.to_csv(index=False)
+
+    st.download_button(
+        "Download CSV",
+        csv,
+        "cleaned_dataset.csv",
+        "text/csv"
+    )
 # ---------------------------------
 # Welcome
 # ---------------------------------
