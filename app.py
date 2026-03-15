@@ -10,6 +10,63 @@ import modules as statx
 
 
 # ------------------------------------------------
+# UI NAME → MODULE KEY MAP
+# ------------------------------------------------
+
+MODULE_MAP = {
+
+    "AI Statistical Advisor": "ai_statistical_advisor",
+    "AI Discovery Lab": "ai_discovery_lab",
+    "Autonomous Scientific Discovery": "autonomous_scientific_discovery",
+
+    "Descriptive Statistics": "descriptive_lab",
+    "EDA": "eda_lab",
+    "Data Lab": "data_lab",
+    "Cleaning Lab": "cleaning_lab",
+    "Visualization": "visualization_lab",
+
+    "Hypothesis Testing": "hypothesis_lab",
+    "Chi-Square Test": "chi_square_lab",
+    "ANOVA": "anova_lab",
+    "Regression": "regression_lab",
+
+    "Factor Analysis": "factor_lab",
+    "Cluster Analysis": "cluster_lab",
+    "Multivariate Analysis": "multivariate_lab",
+
+    "Bayesian Statistics": "bayesian_lab",
+    "Simulation": "simulation_lab",
+    "Time Series": "time_series_lab",
+    "Spatial Statistics": "spatial_statistics_lab",
+    "Survival Analysis": "survival_lab",
+
+    "Econometrics": "econometrics_lab",
+    "Machine Learning": "machine_learning_lab",
+
+    "Biostatistics": "biostatistics",
+    "Medical Biostatistics": "biostatistics_medical_lab",
+    "Biometrics": "biometrics_modeling",
+
+    "Bioinformatics": "bioinformatics",
+    "Genomics DNA Engine": "genomics_dna_engine",
+    "Systems Biology": "systems_biology_omics_lab",
+
+    "Chemoinformatics": "chemoinformatics",
+    "Drug Discovery": "drug_discovery_lab",
+
+    "Statistical Physics": "statistical_physics",
+    "Bioenergy": "bioenergy",
+
+    "Global Intelligence": "global_intelligence_lab",
+
+    "Research Paper Generator": "research_paper_generator",
+    "Research Reporting": "research_reporting_lab",
+
+    "Statistical Consultant": "stat_consultant"
+}
+
+
+# ------------------------------------------------
 # MAIN STATX PLATFORM FUNCTION
 # ------------------------------------------------
 
@@ -56,7 +113,6 @@ def run_statx():
             elif name.endswith(".parquet"):
                 df = pd.read_parquet(uploaded_file)
 
-            # store dataset globally
             st.session_state["dataset"] = df
 
             st.sidebar.success("Dataset loaded successfully")
@@ -68,52 +124,14 @@ def run_statx():
             st.error(f"Error loading dataset: {e}")
 
     # ------------------------------------------------
-    # SIDEBAR MODULE NAVIGATION
+    # MODULE NAVIGATION
     # ------------------------------------------------
 
     st.sidebar.header("StatX Modules")
 
     module = st.sidebar.selectbox(
         "Select Analysis Module",
-        [
-            "Home",
-            "AI Statistical Advisor",
-            "AI Discovery Lab",
-            "Autonomous Scientific Discovery",
-            "Descriptive Statistics",
-            "EDA",
-            "Data Lab",
-            "Cleaning Lab",
-            "Visualization",
-            "Hypothesis Testing",
-            "Chi-Square Test",
-            "ANOVA",
-            "Regression",
-            "Factor Analysis",
-            "Cluster Analysis",
-            "Multivariate Analysis",
-            "Bayesian Statistics",
-            "Simulation",
-            "Time Series",
-            "Spatial Statistics",
-            "Survival Analysis",
-            "Econometrics",
-            "Machine Learning",
-            "Biostatistics",
-            "Medical Biostatistics",
-            "Biometrics",
-            "Bioinformatics",
-            "Genomics DNA Engine",
-            "Systems Biology",
-            "Chemoinformatics",
-            "Drug Discovery",
-            "Statistical Physics",
-            "Bioenergy",
-            "Global Intelligence",
-            "Research Paper Generator",
-            "Research Reporting",
-            "Statistical Consultant"
-        ]
+        ["Home"] + list(MODULE_MAP.keys())
     )
 
     # ------------------------------------------------
@@ -145,165 +163,17 @@ def run_statx():
         return
 
     # ------------------------------------------------
-    # AI MODULES
+    # LOAD MODULE DYNAMICALLY
     # ------------------------------------------------
 
-    if module == "AI Statistical Advisor":
-        statx.ai_statistical_advisor.run()
+    module_key = MODULE_MAP.get(module)
 
-    elif module == "AI Discovery Lab":
-        statx.ai_discovery_lab.run()
+    if module_key:
 
-    elif module == "Autonomous Scientific Discovery":
-        statx.autonomous_scientific_discovery.run()
+        mod = statx.load(module_key)
 
-    # ------------------------------------------------
-    # CORE STATISTICS
-    # ------------------------------------------------
+        if mod and hasattr(mod, "run"):
+            mod.run()
 
-    elif module == "Descriptive Statistics":
-        statx.descriptive_lab.run()
-
-    elif module == "EDA":
-        statx.eda_lab.run()
-
-    elif module == "Data Lab":
-        statx.data_lab.run()
-
-    elif module == "Cleaning Lab":
-        statx.cleaning_lab.run()
-
-    elif module == "Visualization":
-        statx.visualization_lab.run()
-
-    # ------------------------------------------------
-    # STATISTICAL ANALYSIS
-    # ------------------------------------------------
-
-    elif module == "Hypothesis Testing":
-        statx.hypothesis_lab.run()
-
-    elif module == "Chi-Square Test":
-        statx.chi_square_lab.run()
-
-    elif module == "ANOVA":
-        statx.anova_lab.run()
-
-    elif module == "Regression":
-        statx.regression_lab.run()
-
-    elif module == "Factor Analysis":
-        statx.factor_lab.run()
-
-    elif module == "Cluster Analysis":
-        statx.cluster_lab.run()
-
-    elif module == "Multivariate Analysis":
-        statx.multivariate_lab.run()
-
-    # ------------------------------------------------
-    # ADVANCED STATISTICS
-    # ------------------------------------------------
-
-    elif module == "Bayesian Statistics":
-        statx.bayesian_lab.run()
-
-    elif module == "Simulation":
-        statx.simulation_lab.run()
-
-    elif module == "Time Series":
-        statx.time_series_lab.run()
-
-    elif module == "Spatial Statistics":
-        statx.spatial_statistics_lab.run()
-
-    elif module == "Survival Analysis":
-        statx.survival_lab.run()
-
-    # ------------------------------------------------
-    # ECONOMETRICS & ML
-    # ------------------------------------------------
-
-    elif module == "Econometrics":
-        statx.econometrics_lab.run()
-
-    elif module == "Machine Learning":
-        statx.machine_learning_lab.run()
-
-    # ------------------------------------------------
-    # BIOSTATISTICS
-    # ------------------------------------------------
-
-    elif module == "Biostatistics":
-        statx.biostatistics.run()
-
-    elif module == "Medical Biostatistics":
-        statx.biostatistics_medical_lab.run()
-
-    elif module == "Biometrics":
-        statx.biometrics_modeling.run()
-
-    # ------------------------------------------------
-    # BIOINFORMATICS
-    # ------------------------------------------------
-
-    elif module == "Bioinformatics":
-        statx.bioinformatics.run()
-
-    elif module == "Genomics DNA Engine":
-        statx.genomics_dna_engine.run()
-
-    elif module == "Systems Biology":
-        statx.systems_biology_omics_lab.run()
-
-    # ------------------------------------------------
-    # CHEMISTRY
-    # ------------------------------------------------
-
-    elif module == "Chemoinformatics":
-        statx.chemoinformatics.run()
-
-    elif module == "Drug Discovery":
-        statx.drug_discovery_lab.run()
-
-    # ------------------------------------------------
-    # PHYSICS
-    # ------------------------------------------------
-
-    elif module == "Statistical Physics":
-        statx.statistical_physics.run()
-
-    elif module == "Bioenergy":
-        statx.bioenergy.run()
-
-    # ------------------------------------------------
-    # GLOBAL SYSTEMS
-    # ------------------------------------------------
-
-    elif module == "Global Intelligence":
-        statx.global_intelligence_lab.run()
-
-    # ------------------------------------------------
-    # RESEARCH
-    # ------------------------------------------------
-
-    elif module == "Research Paper Generator":
-        statx.research_paper_generator.run()
-
-    elif module == "Research Reporting":
-        statx.research_reporting_lab.run()
-
-    # ------------------------------------------------
-    # CONSULTING
-    # ------------------------------------------------
-
-    elif module == "Statistical Consultant":
-        statx.stat_consultant.run()
-
-
-# ------------------------------------------------
-# RUN APPLICATION
-# ------------------------------------------------
-
-if __name__ == "__main__":
-    run_statx()
+        else:
+            st.error(f"Module '{module_key}' failed to load.")
