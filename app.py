@@ -5,10 +5,6 @@ import numpy as np
 # ------------------------------------------------
 # IMPORT STATX MODULE REGISTRY
 # ------------------------------------------------
-import sys
-import os
-
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 import modules as statx
 
@@ -49,7 +45,7 @@ def run_statx():
 
     df = None
 
-    if uploaded_file:
+    if uploaded_file is not None:
 
         try:
 
@@ -70,9 +66,9 @@ def run_statx():
             elif name.endswith(".parquet"):
                 df = pd.read_parquet(uploaded_file)
 
-            st.success("Dataset loaded successfully")
+            st.sidebar.success("Dataset loaded successfully")
 
-            st.write("Preview")
+            st.write("### Dataset Preview")
             st.dataframe(df.head())
 
         except Exception as e:
@@ -87,22 +83,18 @@ def run_statx():
     module = st.sidebar.selectbox(
         "Select Analysis Module",
         [
-
             "Home",
 
-            # Core
             "AI Statistical Advisor",
             "AI Discovery Lab",
             "Autonomous Scientific Discovery",
 
-            # Basic Statistics
             "Descriptive Statistics",
             "EDA",
             "Data Lab",
             "Cleaning Lab",
             "Visualization",
 
-            # Statistical Analysis
             "Hypothesis Testing",
             "Chi-Square Test",
             "ANOVA",
@@ -111,64 +103,62 @@ def run_statx():
             "Cluster Analysis",
             "Multivariate Analysis",
 
-            # Advanced Statistics
             "Bayesian Statistics",
             "Simulation",
             "Time Series",
             "Spatial Statistics",
             "Survival Analysis",
 
-            # ML & Econometrics
             "Econometrics",
             "Machine Learning",
 
-            # Biostatistics
             "Biostatistics",
             "Medical Biostatistics",
             "Biometrics",
 
-            # Bioinformatics
             "Bioinformatics",
             "Genomics DNA Engine",
             "Systems Biology",
 
-            # Chemistry
             "Chemoinformatics",
             "Drug Discovery",
 
-            # Physics & Energy
             "Statistical Physics",
             "Bioenergy",
 
-            # Global Systems
             "Global Intelligence",
 
-            # Research
             "Research Paper Generator",
             "Research Reporting",
 
-            # Consulting
             "Statistical Consultant"
         ]
     )
 
     # ------------------------------------------------
-    # MODULE ROUTING
+    # HOME PAGE
     # ------------------------------------------------
 
     if module == "Home":
 
         st.write("Welcome to **StatX Scientific Platform**.")
 
-        st.write("""
-        StatX integrates:
+        st.markdown("""
+        **StatX integrates:**
 
-        - Advanced statistical analysis
-        - Machine learning
-        - Bioinformatics
-        - Scientific discovery AI
-        - Global scientific data networks
+        - Advanced statistical analysis  
+        - Machine learning  
+        - Bioinformatics  
+        - Scientific discovery AI  
+        - Global scientific data networks  
         """)
+
+    # ------------------------------------------------
+    # CHECK DATASET
+    # ------------------------------------------------
+
+    elif df is None:
+        st.warning("Please upload a dataset first.")
 
     # ------------------------------------------------
     # AI MODULES
@@ -326,8 +316,10 @@ def run_statx():
     elif module == "Statistical Consultant":
         statx.stat_consultant(df)
 
+
 # ------------------------------------------------
 # RUN APPLICATION
 # ------------------------------------------------
 
-run_statx()
+if __name__ == "__main__":
+    run_statx()
