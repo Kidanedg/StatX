@@ -35,8 +35,6 @@ def run_statx():
         type=["csv","xlsx","xls","txt","json","parquet"]
     )
 
-    df = None
-
     if uploaded_file is not None:
 
         try:
@@ -57,6 +55,9 @@ def run_statx():
 
             elif name.endswith(".parquet"):
                 df = pd.read_parquet(uploaded_file)
+
+            # store dataset globally
+            st.session_state["dataset"] = df
 
             st.sidebar.success("Dataset loaded successfully")
 
@@ -135,7 +136,11 @@ def run_statx():
 
         return
 
-    if df is None:
+    # ------------------------------------------------
+    # CHECK DATASET
+    # ------------------------------------------------
+
+    if "dataset" not in st.session_state:
         st.warning("Please upload a dataset first.")
         return
 
@@ -144,156 +149,156 @@ def run_statx():
     # ------------------------------------------------
 
     if module == "AI Statistical Advisor":
-        statx.ai_statistical_advisor.run(df)
+        statx.ai_statistical_advisor.run()
 
     elif module == "AI Discovery Lab":
-        statx.ai_discovery_lab.run(df)
+        statx.ai_discovery_lab.run()
 
     elif module == "Autonomous Scientific Discovery":
-        statx.autonomous_scientific_discovery.run(df)
+        statx.autonomous_scientific_discovery.run()
 
     # ------------------------------------------------
     # CORE STATISTICS
     # ------------------------------------------------
 
     elif module == "Descriptive Statistics":
-        statx.descriptive_lab.run(df)
+        statx.descriptive_lab.run()
 
     elif module == "EDA":
-        statx.eda_lab.run(df)
+        statx.eda_lab.run()
 
     elif module == "Data Lab":
-        statx.data_lab.run(df)
+        statx.data_lab.run()
 
     elif module == "Cleaning Lab":
-        statx.cleaning_lab.run(df)
+        statx.cleaning_lab.run()
 
     elif module == "Visualization":
-        statx.visualization_lab.run(df)
+        statx.visualization_lab.run()
 
     # ------------------------------------------------
     # STATISTICAL ANALYSIS
     # ------------------------------------------------
 
     elif module == "Hypothesis Testing":
-        statx.hypothesis_lab.run(df)
+        statx.hypothesis_lab.run()
 
     elif module == "Chi-Square Test":
-        statx.chi_square_lab.run(df)
+        statx.chi_square_lab.run()
 
     elif module == "ANOVA":
-        statx.anova_lab.run(df)
+        statx.anova_lab.run()
 
     elif module == "Regression":
-        statx.regression_lab.run(df)
+        statx.regression_lab.run()
 
     elif module == "Factor Analysis":
-        statx.factor_lab.run(df)
+        statx.factor_lab.run()
 
     elif module == "Cluster Analysis":
-        statx.cluster_lab.run(df)
+        statx.cluster_lab.run()
 
     elif module == "Multivariate Analysis":
-        statx.multivariate_lab.run(df)
+        statx.multivariate_lab.run()
 
     # ------------------------------------------------
     # ADVANCED STATISTICS
     # ------------------------------------------------
 
     elif module == "Bayesian Statistics":
-        statx.bayesian_lab.run(df)
+        statx.bayesian_lab.run()
 
     elif module == "Simulation":
-        statx.simulation_lab.run(df)
+        statx.simulation_lab.run()
 
     elif module == "Time Series":
-        statx.time_series_lab.run(df)
+        statx.time_series_lab.run()
 
     elif module == "Spatial Statistics":
-        statx.spatial_statistics_lab.run(df)
+        statx.spatial_statistics_lab.run()
 
     elif module == "Survival Analysis":
-        statx.survival_lab.run(df)
+        statx.survival_lab.run()
 
     # ------------------------------------------------
     # ECONOMETRICS & ML
     # ------------------------------------------------
 
     elif module == "Econometrics":
-        statx.econometrics_lab.run(df)
+        statx.econometrics_lab.run()
 
     elif module == "Machine Learning":
-        statx.machine_learning_lab.run(df)
+        statx.machine_learning_lab.run()
 
     # ------------------------------------------------
     # BIOSTATISTICS
     # ------------------------------------------------
 
     elif module == "Biostatistics":
-        statx.biostatistics.run(df)
+        statx.biostatistics.run()
 
     elif module == "Medical Biostatistics":
-        statx.biostatistics_medical_lab.run(df)
+        statx.biostatistics_medical_lab.run()
 
     elif module == "Biometrics":
-        statx.biometrics_modeling.run(df)
+        statx.biometrics_modeling.run()
 
     # ------------------------------------------------
     # BIOINFORMATICS
     # ------------------------------------------------
 
     elif module == "Bioinformatics":
-        statx.bioinformatics.run(df)
+        statx.bioinformatics.run()
 
     elif module == "Genomics DNA Engine":
-        statx.genomics_dna_engine.run(df)
+        statx.genomics_dna_engine.run()
 
     elif module == "Systems Biology":
-        statx.systems_biology_omics_lab.run(df)
+        statx.systems_biology_omics_lab.run()
 
     # ------------------------------------------------
     # CHEMISTRY
     # ------------------------------------------------
 
     elif module == "Chemoinformatics":
-        statx.chemoinformatics.run(df)
+        statx.chemoinformatics.run()
 
     elif module == "Drug Discovery":
-        statx.drug_discovery_lab.run(df)
+        statx.drug_discovery_lab.run()
 
     # ------------------------------------------------
     # PHYSICS
     # ------------------------------------------------
 
     elif module == "Statistical Physics":
-        statx.statistical_physics.run(df)
+        statx.statistical_physics.run()
 
     elif module == "Bioenergy":
-        statx.bioenergy.run(df)
+        statx.bioenergy.run()
 
     # ------------------------------------------------
     # GLOBAL SYSTEMS
     # ------------------------------------------------
 
     elif module == "Global Intelligence":
-        statx.global_intelligence_lab.run(df)
+        statx.global_intelligence_lab.run()
 
     # ------------------------------------------------
     # RESEARCH
     # ------------------------------------------------
 
     elif module == "Research Paper Generator":
-        statx.research_paper_generator.run(df)
+        statx.research_paper_generator.run()
 
     elif module == "Research Reporting":
-        statx.research_reporting_lab.run(df)
+        statx.research_reporting_lab.run()
 
     # ------------------------------------------------
     # CONSULTING
     # ------------------------------------------------
 
     elif module == "Statistical Consultant":
-        statx.stat_consultant.run(df)
+        statx.stat_consultant.run()
 
 
 # ------------------------------------------------
