@@ -321,3 +321,9 @@ def run_statx():
 
     elif module == "Statistical Consultant":
         statx.stat_consultant(df)
+
+# ------------------------------------------------
+# RUN APPLICATION
+# ------------------------------------------------
+
+run_statx()
