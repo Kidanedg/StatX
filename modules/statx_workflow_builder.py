@@ -24,14 +24,11 @@ class WorkflowNode:
 # ---------------------------------------------
 
 def dataset_node(df):
-
     return df
 
 
 def clean_data_node(df):
-
     df = df.dropna()
-
     return df
 
 
@@ -82,116 +79,110 @@ class WorkflowEngine:
         for node in self.nodes:
 
             if node.name == "Regression":
-
                 result = node.function(data, target)
-
             else:
-
                 data = node.function(data)
 
         return result
 
 
 # ---------------------------------------------
-# STREAMLIT VISUAL WORKFLOW BUILDER
+# MAIN WORKFLOW BUILDER CLASS
 # ---------------------------------------------
 
-def run(df):
+class StatXWorkflowBuilder:
 
-    st.title("StatX Visual Workflow Builder")
+    @staticmethod
+    def run(df):
 
-    if df is None:
+        st.title("StatX Visual Workflow Builder")
 
-        st.warning("Upload dataset first")
-        return
+        if df is None:
+            st.warning("Upload dataset first")
+            return
 
-# ---------------------------------------------
-# AVAILABLE BLOCKS
-# ---------------------------------------------
+        # ---------------------------------------------
+        # AVAILABLE BLOCKS
+        # ---------------------------------------------
 
-    st.sidebar.header("Workflow Blocks")
+        st.sidebar.header("Workflow Blocks")
 
-    blocks = [
+        blocks = [
+            "Dataset",
+            "Data Cleaning",
+            "Feature Scaling",
+            "Regression Model"
+        ]
 
-        "Dataset",
-        "Data Cleaning",
-        "Feature Scaling",
-        "Regression Model"
+        selected_blocks = st.sidebar.multiselect(
+            "Build workflow",
+            blocks
+        )
 
-    ]
+        # ---------------------------------------------
+        # WORKFLOW DISPLAY
+        # ---------------------------------------------
 
-    selected_blocks = st.sidebar.multiselect(
+        st.subheader("Workflow Pipeline")
 
-        "Drag blocks into workflow",
+        if len(selected_blocks) == 0:
 
-        blocks
+            st.info("Add blocks to create workflow")
 
-    )
+        else:
 
-# ---------------------------------------------
-# WORKFLOW DISPLAY
-# ---------------------------------------------
+            workflow_text = " → ".join(selected_blocks)
 
-    st.subheader("Workflow Pipeline")
+            st.code(workflow_text)
 
-    if len(selected_blocks) == 0:
+        # ---------------------------------------------
+        # TARGET VARIABLE
+        # ---------------------------------------------
 
-        st.info("Add blocks to create workflow")
+        target = st.selectbox("Target Variable", df.columns)
 
-    else:
+        # ---------------------------------------------
+        # BUILD WORKFLOW
+        # ---------------------------------------------
 
-        workflow_text = " → ".join(selected_blocks)
+        node_objects = []
 
-        st.code(workflow_text)
+        for block in selected_blocks:
 
-# ---------------------------------------------
-# TARGET VARIABLE
-# ---------------------------------------------
+            if block == "Dataset":
 
-    target = st.selectbox("Target Variable", df.columns)
+                node_objects.append(
+                    WorkflowNode("Dataset", dataset_node)
+                )
 
-# ---------------------------------------------
-# BUILD WORKFLOW NODES
-# ---------------------------------------------
+            elif block == "Data Cleaning":
 
-    node_objects = []
+                node_objects.append(
+                    WorkflowNode("Cleaning", clean_data_node)
+                )
 
-    for block in selected_blocks:
+            elif block == "Feature Scaling":
 
-        if block == "Dataset":
+                node_objects.append(
+                    WorkflowNode("Scaling", scale_features_node)
+                )
 
-            node_objects.append(
-                WorkflowNode("Dataset", dataset_node)
-            )
+            elif block == "Regression Model":
 
-        elif block == "Data Cleaning":
+                node_objects.append(
+                    WorkflowNode("Regression", regression_node)
+                )
 
-            node_objects.append(
-                WorkflowNode("Cleaning", clean_data_node)
-            )
+        # ---------------------------------------------
+        # EXECUTE WORKFLOW
+        # ---------------------------------------------
 
-        elif block == "Feature Scaling":
+        if st.button("Run Workflow"):
 
-            node_objects.append(
-                WorkflowNode("Scaling", scale_features_node)
-            )
+            engine = WorkflowEngine(node_objects)
 
-        elif block == "Regression Model":
+            result = engine.run(df, target)
 
-            node_objects.append(
-                WorkflowNode("Regression", regression_node)
-            )
+            st.success("Workflow executed")
 
-# ---------------------------------------------
-# EXECUTE WORKFLOW
-# ---------------------------------------------
-
-    if st.button("Run Workflow"):
-
-        engine = WorkflowEngine(node_objects)
-
-        result = engine.run(df, target)
-
-        st.success("Workflow executed")
-
-        st.metric("Model R²", round(result,3))
+            st.metric("Model R²", round(result, 3))
