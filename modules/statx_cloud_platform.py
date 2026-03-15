@@ -22,8 +22,8 @@ class UserManager:
         user_id = str(uuid.uuid4())
 
         st.session_state.users[user_id] = {
-            "username":username,
-            "projects":[]
+            "username": username,
+            "projects": []
         }
 
         return user_id
@@ -58,12 +58,13 @@ class CollaborationWorkspace:
 
         project = {
 
-            "id":str(uuid.uuid4()),
-            "name":name,
-            "owner":owner,
-            "members":[owner],
-            "datasets":[],
-            "analyses":[]
+            "id": str(uuid.uuid4()),
+            "name": name,
+            "owner": owner,
+            "members": [owner],
+            "datasets": [],
+            "analyses": []
+
         }
 
         if "projects" not in st.session_state:
@@ -99,7 +100,7 @@ class DistributedEngine:
 
 
 # ---------------------------------------------
-# STATISTICAL LABORATORY EXECUTION
+# STATISTICAL LABORATORY
 # ---------------------------------------------
 
 class StatisticalLab:
@@ -126,7 +127,6 @@ class ResearchPublisher:
     def generate_paper(self, title, results):
 
         paper = f"""
-
 Title: {title}
 
 Date: {datetime.date.today()}
@@ -149,120 +149,112 @@ scientific research.
 
 
 # ---------------------------------------------
-# STREAMLIT CLOUD INTERFACE
+# MAIN STATX CLOUD PLATFORM
 # ---------------------------------------------
 
-def run():
+class StatXCloudPlatform:
 
-    st.title("StatX Cloud Scientific Platform")
+    @staticmethod
+    def run():
 
-    user_manager = UserManager()
-    storage = CloudStorage()
-    workspace = CollaborationWorkspace()
-    lab = StatisticalLab()
-    publisher = ResearchPublisher()
+        st.title("StatX Cloud Scientific Platform")
 
-# ---------------------------------------------
-# USER LOGIN
-# ---------------------------------------------
+        user_manager = UserManager()
+        storage = CloudStorage()
+        workspace = CollaborationWorkspace()
+        lab = StatisticalLab()
+        publisher = ResearchPublisher()
 
-    st.sidebar.header("User Account")
+        # ---------------------------------------------
+        # USER LOGIN
+        # ---------------------------------------------
 
-    username = st.sidebar.text_input("Enter Username")
+        st.sidebar.header("User Account")
 
-    if st.sidebar.button("Register"):
+        username = st.sidebar.text_input("Enter Username")
 
-        user_id = user_manager.register(username)
+        if st.sidebar.button("Register"):
 
-        st.sidebar.success(f"User created: {user_id}")
+            user_id = user_manager.register(username)
 
-# ---------------------------------------------
-# DATASET UPLOAD
-# ---------------------------------------------
+            st.sidebar.success(f"User created: {user_id}")
 
-    st.header("Cloud Dataset Manager")
+        # ---------------------------------------------
+        # DATASET UPLOAD
+        # ---------------------------------------------
 
-    uploaded = st.file_uploader("Upload dataset", type=["csv"])
+        st.header("Cloud Dataset Manager")
 
-    df=None
+        uploaded = st.file_uploader("Upload dataset", type=["csv"])
 
-    if uploaded:
+        df = None
 
-        df = pd.read_csv(uploaded)
+        if uploaded:
 
-        dataset_id = storage.save_dataset(df)
+            df = pd.read_csv(uploaded)
 
-        st.success(f"Dataset stored in cloud ID: {dataset_id}")
+            dataset_id = storage.save_dataset(df)
 
-# ---------------------------------------------
-# ONLINE STATISTICAL LAB
-# ---------------------------------------------
+            st.success(f"Dataset stored in cloud ID: {dataset_id}")
 
-    if df is not None:
+        # ---------------------------------------------
+        # ONLINE STATISTICAL LAB
+        # ---------------------------------------------
 
-        st.header("Online Statistical Laboratory")
+        if df is not None:
 
-        option = st.selectbox(
+            st.header("Online Statistical Laboratory")
 
-            "Select Analysis",
+            option = st.selectbox(
+                "Select Analysis",
+                ["Descriptive Statistics", "Correlation"]
+            )
 
-            ["Descriptive Statistics","Correlation"]
+            if option == "Descriptive Statistics":
 
-        )
+                st.dataframe(lab.descriptive_statistics(df))
 
-        if option=="Descriptive Statistics":
+            elif option == "Correlation":
 
-            st.dataframe(lab.descriptive_statistics(df))
+                st.dataframe(lab.correlation_analysis(df))
 
-        elif option=="Correlation":
+        # ---------------------------------------------
+        # DISTRIBUTED COMPUTATION
+        # ---------------------------------------------
 
-            st.dataframe(lab.correlation_analysis(df))
+            st.header("Distributed Statistical Computation")
 
-# ---------------------------------------------
-# DISTRIBUTED COMPUTATION
-# ---------------------------------------------
+            engine = DistributedEngine()
 
-        st.header("Distributed Statistical Computation")
+            tasks = [
 
-        engine = DistributedEngine()
+                lambda: lab.descriptive_statistics(df),
+                lambda: lab.mean_vector(df),
+                lambda: lab.correlation_analysis(df)
 
-        tasks = [
+            ]
 
-            lambda: lab.descriptive_statistics(df),
-            lambda: lab.mean_vector(df),
-            lambda: lab.correlation_analysis(df)
+            if st.button("Run Distributed Analysis"):
 
-        ]
+                results = engine.parallel_analysis(tasks)
 
-        if st.button("Run Distributed Analysis"):
+                st.write("Distributed Results")
 
-            results = engine.parallel_analysis(tasks)
+                for r in results:
+                    st.write(r)
 
-            st.write("Distributed Results")
+        # ---------------------------------------------
+        # RESEARCH PUBLICATION
+        # ---------------------------------------------
 
-            for r in results:
+            st.header("Automatic Research Publication")
 
-                st.write(r)
+            title = st.text_input("Research Paper Title")
 
-# ---------------------------------------------
-# RESEARCH PUBLICATION
-# ---------------------------------------------
+            if st.button("Generate Research Paper"):
 
-        st.header("Automatic Research Publication")
+                results = lab.descriptive_statistics(df)
 
-        title = st.text_input("Research Paper Title")
+                paper = publisher.generate_paper(title, results)
 
-        if st.button("Generate Research Paper"):
-
-            results = lab.descriptive_statistics(df)
-
-            paper = publisher.generate_paper(title, results)
-
-            st.text_area("Generated Paper", paper, height=400)
-
-
-# ---------------------------------------------
-# RUN PLATFORM
-# ---------------------------------------------
-
-run()
+                st.text_area("Generated Paper", paper, height=400)
